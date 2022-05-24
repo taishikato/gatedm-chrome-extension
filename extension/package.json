@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "move": "yarn build && rm -rf ../static && mv dist/assets ../static"
+    "build:extension": "yarn build && rm -rf ../assets && cp -R dist/assets ../"
   },
   "dependencies": {
     "daisyui": "^2.15.1",
