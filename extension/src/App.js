@@ -86,7 +86,7 @@ function App() {
   }, [users]);
 
   return (
-    <div className="App w-full min-w-[300px] text-center flex flex-col gap-y-3 pt-8 pb-5 bg-slate-900 text-sm px-2">
+    <div className="App w-full min-w-[300px] text-center flex flex-col gap-y-3 pt-4 pb-5 bg-slate-900 text-sm px-2">
       <h1 className="text-base font-semibold">Gated DM</h1>
       <div>
         <input
@@ -110,6 +110,10 @@ function App() {
           Filter users
         </button>
       </div>
+      <p className="text-xs">
+        If you still see a user other than the one you assumed, press the button
+        again. The reason is that Twitter may add new users if necessary.
+      </p>
     </div>
   );
 }
