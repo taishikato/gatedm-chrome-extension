@@ -87,6 +87,7 @@ function App() {
 
   return (
     <div className="App w-full min-w-[300px] text-center flex flex-col gap-y-3 pt-8 pb-5 bg-slate-900 text-sm">
+      <h1 className="text-base font-semibold">Gated DM</h1>
       <div>
         <input
           value={threshold}
