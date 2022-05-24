@@ -5,6 +5,8 @@ import { getObjectFromLocalStorage } from "./utils/storageUtils";
 import { getDmListFromDom } from "./utils/getDmListFromDom";
 import { hideUser } from "./utils/hideUser";
 
+const oneWeekSec = 604800;
+
 function App() {
   const [users, setUsers] = useState([]);
   const currentTab = useRef();
@@ -52,10 +54,10 @@ function App() {
       for (const user of users) {
         const dataFromStorage = await getObjectFromLocalStorage(user);
 
-        console.log({ dataFromStorage });
-
-        if (dataFromStorage !== undefined) {
-          console.log("here");
+        if (
+          dataFromStorage !== undefined ||
+          current - dataFromStorage.createdAt < oneWeekSec
+        ) {
           if (dataFromStorage.followersCount < threshold)
             await hideUserFromDom(user);
           continue;
@@ -71,8 +73,6 @@ function App() {
             },
           }
         ).then((res) => res.json());
-
-        console.log({ result });
 
         chrome.storage.sync.set(
           { [user]: { ...result, createdAt: current } },
