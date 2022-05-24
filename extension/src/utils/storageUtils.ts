@@ -1,9 +1,8 @@
-/* global chrome */
-/**
- * Retrieve object from Chrome's Local StorageArea
- * @param {string} key
- */
-const getObjectFromLocalStorage = async function (key) {
+import { DataFromStorage } from "../App";
+
+const getObjectFromLocalStorage = async (
+  key: string
+): Promise<DataFromStorage | undefined> => {
   return new Promise((resolve, reject) => {
     try {
       chrome.storage.sync.get(key, function (value) {
@@ -15,15 +14,11 @@ const getObjectFromLocalStorage = async function (key) {
   });
 };
 
-/**
- * Save Object in Chrome's Local StorageArea
- * @param {*} obj
- */
-const saveObjectInLocalStorage = async function (obj) {
+const saveObjectInLocalStorage = async (obj: any) => {
   return new Promise((resolve, reject) => {
     try {
       chrome.storage.sync.set(obj, function () {
-        resolve();
+        resolve(undefined);
       });
     } catch (ex) {
       reject(ex);
@@ -31,16 +26,11 @@ const saveObjectInLocalStorage = async function (obj) {
   });
 };
 
-/**
- * Removes Object from Chrome Local StorageArea.
- *
- * @param {string or array of string keys} keys
- */
-const removeObjectFromLocalStorage = async function (keys) {
+const removeObjectFromLocalStorage = async (keys: string) => {
   return new Promise((resolve, reject) => {
     try {
       chrome.storage.sync.remove(keys, function () {
-        resolve();
+        resolve(undefined);
       });
     } catch (ex) {
       reject(ex);

@@ -7,9 +7,14 @@ import { hideUser } from "./utils/hideUser";
 
 const oneWeekSec = 604800;
 
+export type DataFromStorage = {
+  followersCount: number;
+  createdAt: number;
+};
+
 function App() {
   const [users, setUsers] = useState([]);
-  const currentTab = useRef();
+  const currentTab = useRef<chrome.tabs.Tab>();
   const [threshold, setThreshold] = useState(1000);
   const [callingApi, setCallingApi] = useState(false);
 
@@ -29,8 +34,8 @@ function App() {
   const handleClick = async () => {
     chrome.scripting.executeScript(
       {
-        target: { tabId: currentTab.current.id },
-        function: getDmListFromDom,
+        target: { tabId: currentTab.current?.id as number },
+        func: getDmListFromDom,
       },
       (result) => {
         setUsers(result[0].result);
@@ -38,10 +43,10 @@ function App() {
     );
   };
 
-  const hideUserFromDom = async (username) => {
+  const hideUserFromDom = async (username: string) => {
     chrome.scripting.executeScript({
-      target: { tabId: currentTab.current.id },
-      function: hideUser,
+      target: { tabId: currentTab.current?.id as number },
+      func: hideUser,
       args: [username],
     });
   };
@@ -52,18 +57,19 @@ function App() {
       const current = getUnixTimeStamp();
 
       for (const user of users) {
-        const dataFromStorage = await getObjectFromLocalStorage(user);
+        const dataFromStorage: DataFromStorage | undefined =
+          await getObjectFromLocalStorage(user);
 
         if (
-          dataFromStorage !== undefined ||
-          current - dataFromStorage.createdAt < oneWeekSec
+          dataFromStorage !== undefined &&
+          current - dataFromStorage?.createdAt < oneWeekSec
         ) {
           if (dataFromStorage.followersCount < threshold)
             await hideUserFromDom(user);
           continue;
         }
 
-        const result = await fetch(process.env.REACT_APP_API_URL, {
+        const result = await fetch(process.env.REACT_APP_API_URL ?? "", {
           method: "POST",
           body: JSON.stringify({ username: user }),
           headers: {
@@ -88,7 +94,7 @@ function App() {
       <div>
         <input
           value={threshold}
-          onChange={(e) => setThreshold(e.target.value)}
+          onChange={(e) => setThreshold(Number(e.target.value))}
           type="number"
           className="rounded-full input bg-slate-300 text-slate-800"
         />
