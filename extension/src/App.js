@@ -63,16 +63,13 @@ function App() {
           continue;
         }
 
-        const result = await fetch(
-          "http://localhost:5001/gated-app/us-central1/getTwitterData",
-          {
-            method: "POST",
-            body: JSON.stringify({ username: user }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        ).then((res) => res.json());
+        const result = await fetch(process.env.REACT_APP_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ username: user }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then((res) => res.json());
 
         chrome.storage.sync.set(
           { [user]: { ...result, createdAt: current } },
