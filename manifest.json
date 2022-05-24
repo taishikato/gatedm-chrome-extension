@@ -13,7 +13,7 @@
     "https://*/*"
   ],
   "action": {
-    "default_popup": "extension/build/index.html",
+    "default_popup": "extension/dist/index.html",
     "default_icon": {
       "16": "/images/get_started16.jpeg"
     }
