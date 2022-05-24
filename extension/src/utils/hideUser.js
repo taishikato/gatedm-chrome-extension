@@ -1,5 +1,5 @@
-export const getDomList = () => {
-  const dom = document.querySelector('[href="/finereli"]');
+export const hideUser = (username) => {
+  const dom = document.querySelector(`[href="/${username}"]`);
 
   const wrapperDom =
     dom.parentElement.parentElement.parentElement.parentElement.parentElement

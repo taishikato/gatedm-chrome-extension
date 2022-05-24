@@ -1,51 +1,65 @@
 /* global chrome */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getUnixTimeStamp } from "./utils/getUnixTimeStamp";
 import { getObjectFromLocalStorage } from "./utils/storageUtils";
 import { getDmListFromDom } from "./utils/getDmListFromDom";
-import { getDomList } from "./utils/getDomList";
+import { hideUser } from "./utils/hideUser";
 
 function App() {
   const [users, setUsers] = useState([]);
+  const currentTab = useRef();
+  const [threshold, setThreshold] = useState(1000);
+  const [callingApi, setCallingApi] = useState(false);
+
+  useEffect(() => {
+    const getCurrentTab = async () => {
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+
+      currentTab.current = tab;
+    };
+
+    getCurrentTab();
+  }, []);
 
   const handleClick = async () => {
-    const [tab] = await chrome.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
-
     chrome.scripting.executeScript(
       {
-        target: { tabId: tab.id },
+        target: { tabId: currentTab.current.id },
         function: getDmListFromDom,
       },
       (result) => {
-        console.log({ result });
         setUsers(result[0].result);
       }
     );
   };
 
-  const deleteUser = async () => {
-    const [tab] = await chrome.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
-
+  const hideUserFromDom = async (username) => {
     chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: getDomList,
+      target: { tabId: currentTab.current.id },
+      function: hideUser,
+      args: [username],
     });
   };
 
   useEffect(() => {
     const fetchUsers = async () => {
+      setCallingApi(true);
       const current = getUnixTimeStamp();
 
       for (const user of users) {
         const dataFromStorage = await getObjectFromLocalStorage(user);
 
-        if (dataFromStorage !== undefined) continue;
+        console.log({ dataFromStorage });
+
+        if (dataFromStorage !== undefined) {
+          console.log("here");
+          if (dataFromStorage.followersCount < threshold)
+            await hideUserFromDom(user);
+          continue;
+        }
 
         const result = await fetch(
           "http://localhost:5001/gated-app/us-central1/getTwitterData",
@@ -58,31 +72,43 @@ function App() {
           }
         ).then((res) => res.json());
 
+        console.log({ result });
+
         chrome.storage.sync.set(
           { [user]: { ...result, createdAt: current } },
           () => {}
         );
+        if (result.followersCount < threshold) await hideUserFromDom(user);
       }
+      setCallingApi(false);
     };
     if (users.length > 0) fetchUsers();
   }, [users]);
 
   return (
-    <div className="App w-full min-w-[300px]">
-      <div className="my-10">
+    <div className="App w-full min-w-[300px] text-center flex flex-col gap-y-3 pt-8 pb-5 bg-slate-900 text-sm">
+      <div>
+        <input
+          value={threshold}
+          onChange={(e) => setThreshold(e.target.value)}
+          type="number"
+          className="rounded-full input bg-slate-300 text-slate-800"
+        />
+      </div>
+      <div className="text-slate-100">
+        Condition: with more than{" "}
+        <span className="font-semibold">{threshold}</span> followers.
+      </div>
+      <div>
         <button
           onClick={handleClick}
-          className="mb-3 py-2 px-3 bg-slate-200 font-bold rounded-full text-slate-800 hover:bg-slate-300 mx-auto block"
+          className={`btn mx-auto bg-slate-300 hover:bg-slate-400 text-slate-800 rounded-full ${
+            callingApi ? "loading" : ""
+          }`}
         >
           Filter users
         </button>
-        <button onClick={deleteUser}>Delete a user</button>
       </div>
-      <ul>
-        {users.map((user) => (
-          <li>{user}</li>
-        ))}
-      </ul>
     </div>
   );
 }
