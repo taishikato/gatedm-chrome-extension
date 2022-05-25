@@ -1,6 +1,6 @@
 {
-  "short_name": "BgColor Change",
-  "name": "Change background color",
+  "short_name": "Gated DM",
+  "name": "Gated DM - Filter out your DM list on Twitter",
   "version": "1.0.0",
   "manifest_version": 3,
   "permissions": [
@@ -10,12 +10,12 @@
     "scripting"
   ],
   "host_permissions": [
-    "https://*/*"
+    "https://twitter.com/messages/*"
   ],
   "action": {
     "default_popup": "extension/dist/index.html",
     "default_icon": {
-      "16": "/images/get_started16.jpeg"
+      "16": "/images/icon48.png"
     }
   },
   "icons": {
