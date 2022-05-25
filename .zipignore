@@ -1,0 +1,13 @@
+.DS_Store
+.env*
+.eslintrc.js
+/.git/*
+/.idea/*
+/deploymentpackage/*
+.gitignore
+.prettierrc.js
+build.sh
+deploy.sh
+extension.zip
+deploy.sh
+extension

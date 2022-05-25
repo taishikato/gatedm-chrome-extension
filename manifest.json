@@ -13,7 +13,7 @@
     "https://twitter.com/messages/*"
   ],
   "action": {
-    "default_popup": "extension/dist/index.html",
+    "default_popup": "assets/index.html",
     "default_icon": {
       "16": "/images/icon48.png"
     }
