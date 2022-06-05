@@ -5,7 +5,7 @@
   "manifest_version": 3,
   "permissions": [
     "storage",
-    "tabs",
+    // "tabs",
     "activeTab",
     "scripting"
   ],

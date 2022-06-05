@@ -4,9 +4,11 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build:dev": "tsc && vite build --mode dev",
+    "build": "tsc && vite build --mode prod",
     "preview": "vite preview",
-    "build:extension": "yarn build && rm -rf ../assets && cp -R dist/assets ../ && cp dist/index.html ../assets/"
+    "build:extension:dev": "yarn build:dev && rm -rf ../assets && cp -R dist/assets ../ && cp dist/index.html ../assets/",
+    "build:extension:prod": "yarn build && rm -rf ../assets && cp -R dist/assets ../ && cp dist/index.html ../assets/"
   },
   "dependencies": {
     "daisyui": "^2.15.1",

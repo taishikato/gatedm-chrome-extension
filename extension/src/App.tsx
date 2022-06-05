@@ -60,16 +60,18 @@ function App() {
         const dataFromStorage: DataFromStorage | undefined =
           await getObjectFromLocalStorage(user);
 
-        if (
-          dataFromStorage !== undefined &&
-          current - dataFromStorage?.createdAt < oneWeekSec
-        ) {
-          if (dataFromStorage.followersCount < threshold)
-            await hideUserFromDom(user);
-          continue;
-        }
+        // if (
+        //   dataFromStorage !== undefined &&
+        //   current - dataFromStorage?.createdAt < oneWeekSec
+        // ) {
+        //   if (dataFromStorage.followersCount < threshold)
+        //     await hideUserFromDom(user);
+        //   continue;
+        // }
 
-        const result = await fetch(process.env.REACT_APP_API_URL ?? "", {
+        console.log(import.meta.env.VITE_API_URL);
+
+        const result = await fetch(import.meta.env.VITE_API_URL ?? "", {
           method: "POST",
           body: JSON.stringify({ username: user }),
           headers: {
